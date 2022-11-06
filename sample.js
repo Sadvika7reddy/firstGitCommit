@@ -1,7 +1,5 @@
-const items=document.getElementsByClassName('list-group-item');
-items[2].style.background='green';
-for(let i=0;i<items.length;i++)
-{
-    items[i].style.fontWeight='bold';
-    items[i].style.color='red';
-}
+const obj1=document.querySelector('.list-items');
+console.log(obj1);
+obj1.style.color='red';
+obj1.style.background='yellow';
+
