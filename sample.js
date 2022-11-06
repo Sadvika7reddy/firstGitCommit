@@ -1,7 +1,7 @@
-const header=document.getElementById('header-title');
-header.textContent='hello';
-header.style.borderBottom='solid 3px #000';
-const title=document.querySelector('.title');
-console.log(title);
-title.style.color='Red';
-title.style.fontWeight="bold";
+const items=document.getElementsByClassName('list-group-item');
+items[2].style.background='green';
+for(let i=0;i<items.length;i++)
+{
+    items[i].style.fontWeight='bold';
+    items[i].style.color='red';
+}
