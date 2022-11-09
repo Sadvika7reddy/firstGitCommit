@@ -7,5 +7,12 @@ myform.addEventListener('submit',onsubmit);
 function onsubmit(e)
 {
     e.preventDefault();
-    localStorage.setItem('name1',nameinput.value,'name2',emailinput.value);
+    let userDetails={
+        name:nameinput.value,
+        email:emailinput.value
+    }
+    let myObj=JSON.stringify(userDetails)
+    localStorage.setItem('call',myObj);
+    let obj1=JSON.parse(localStorage.getItem("call"));
+    console.log(obj1);
 }
