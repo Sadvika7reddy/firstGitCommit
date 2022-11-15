@@ -4,7 +4,9 @@ const myform=document.querySelector('#my-form');
 const nameinput=document.querySelector('#name');
 const emailinput=document.querySelector('#email');
 const userList=document.querySelector('#users');
+
 myform.addEventListener('submit',onsubmit);
+userDetails.addEventListener('click',removeItem(emailinput));
 function onsubmit(e)
 {
     e.preventDefault();
@@ -19,6 +21,18 @@ function onsubmit(e)
     const li=document.createElement('li');
     li.appendChild(document.createTextNode(`${nameinput.value} ${emailinput.value}`));
     userList.appendChild(li);
+    var deletebtn=document.createElement('button');
+    deletebtn.className='btn';
+    deletebtn.appendChild(document.createTextNode('X'));
+    li.appendChild(deletebtn);
+    var editbtn=document.createElement('button');
+    editbtn.className='btn';
+    editbtn.appendChild(document.createTextNode('Edit'));
+    li.appendChild(editbtn);
+}
+function removeItem(emailinput)
+{
+    localStorage.removeItem(emailinput);
 }
 
 
