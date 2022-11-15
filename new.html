@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<body>
+<script>
+   
+   /* let Student={age:30}
+   function addNumbers()
+   {
+    return this.age;
+   }
+    
+   var bound=addNumbers.bind(Student);
+   console.log(bound());
+   */
+   /*function multiply(x,y)
+   {
+    console.log(x*y);
+   }
+   let multiply1=multiply.bind(this,2);
+   multiply1(3);
+   */
+  function multiply(x)
+  {
+    return function(y)
+    {
+        console.log(x*y);
+    }
+  }
+  let multiply1=multiply(2);
+   multiply1(3);
+   
+
+
+
+</script>
+</body>
+</html>
