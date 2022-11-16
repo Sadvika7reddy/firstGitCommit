@@ -1,41 +1,7 @@
 <!DOCTYPE html>
 <body>
-<script>
-  class Student
-  {
-   static i=0;
-   constructor(name,age,ph,bMarks)
-   {
-      this.name=name;
-      this.age=age;
-      this.ph=ph;
-      this.bMarks=bMarks;
-      Student.i=Student.i+1;
-   }
-   eligible(minage)
-   {
-      return (minMarks)=>
-      {
-         if(this.bMarks>minMarks&&this.age>minage)
-         {
-            console.log(this.name+'is elgible');
-         }
-      }
-      
-   }
-
-}
-  let obj1=new Student('sadvika',21,86447899,50); 
-  let obj2=new Student('vyshnavi',23,86447899,76); 
-  let obj3=new Student('balu',27,86447898,97); 
-  let obj4=new Student('swapna',26,86447499,30); 
-  let obj5=new Student('swathi',29,864478949,20); 
-  obj1.eligible(21)(40);
-  obj2.eligible(21)(40);
-  obj3.eligible(21)(40);
-  obj4.eligible(21)(40);
-  obj5.eligible(21)(40);
-  console.log(Student.i);
-</script>
+   <h1>NAMASTE JAVASCRIPT</h1>
+   <button id="click me">click me</button>
+<script src="new.js"></script>
 </body>
 </html>
