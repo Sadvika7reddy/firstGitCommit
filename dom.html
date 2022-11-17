@@ -1,14 +1,67 @@
 <html>
     <body>
-        <form id="my-form">
-            <h1>Add Users</h1>
-            <label for="name">Name</label>
-            <input type="text" id="name">
-            <label for="email">Email:</label>
-            <input type="text" id="email">
-        <input class="btn" type="submit" value="submit">
+        <form onsubmit="savetoLocalStorage(event)">
+            <h1>add users</h1>
+            <label> Name</label>
+            <input id="username" type="text" name="username" required/><br>
+            <label>Email</label>
+            <input id="email" type="email" name="emailId" required/><br>
+            <button>Submit</button>
         </form>
-        <ul id="users"></ul>
-        <script src="sad.js"></script>
+        <ul id='listOfitems'></ul>
+        <script>
+            function savetoLocalStorage(event) {
+                event.preventDefault();
+                const name = event.target.username.value;
+                const email = event.target.emailId.value;
+    
+                const obj = {
+                    name,
+                    email
+                }
+                localStorage.setItem(obj.email, JSON.stringify(obj));
+                registeredusers(obj);
+            }
+            window.addEventListener('DOMContentLoaded',(event)=>{
+                Object.keys(localStorage).forEach(key=>{
+                    const user=JSON.parse(localStorage.getItem(key));
+                    registeredusers(user);
+
+                })
+            }
+            )
+            function registeredusers(user)
+            {
+                const parentNode=document.getElementById('listOfitems');
+                const createItems= `<li id='${user.email}'>${user.name} - ${user.email}
+                                                <button onclick=deleteUser('${user.email}')>Delete</button>
+                                                <button onclick=editUserDetails('${user.email}','${user.name}','${user.phonenumber}')>Edit User </button>
+                                            </li>
+                                            `
+                    parentNode.innerHTML+=createItems;
+            }
+            function editUserDetails(emailId, name, phonenumber){
+
+                document.getElementById('email').value = emailId;
+                document.getElementById('username').value = name;
+                document.getElementById('phonenumber').value =phonenumber;
+
+                    deleteUser(emailId)
+            }
+            function deleteUser(email)
+            {
+                localStorage.removeItem(email);
+                removeitems(email);
+            }
+            function removeitems(email){
+                const parentNode=document.getElementById('listOfitems');
+                const child=document.getElementById(email);
+                parentNode.removeChild(child);
+            }
+
+
+        </script>
+
+
     </body>
 </html>
