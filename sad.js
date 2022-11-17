@@ -6,7 +6,7 @@ const emailinput=document.querySelector('#email');
 const userList=document.querySelector('#users');
 
 myform.addEventListener('submit',onsubmit);
-userDetails.addEventListener('click',removeItem(emailinput));
+userDetails.addEventListener('deletebtn',removeitem(emailinput.value));
 function onsubmit(e)
 {
     e.preventDefault();
@@ -15,7 +15,7 @@ function onsubmit(e)
         email:emailinput.value
     }
     let myObj=JSON.stringify(userDetails)
-    localStorage.setItem('username'+emailinput.value,myObj);
+    localStorage.setItem(emailinput.value,myObj);
     let obj1=JSON.parse(localStorage.getItem("call"));
     console.log(obj1);
     const li=document.createElement('li');
@@ -30,7 +30,7 @@ function onsubmit(e)
     editbtn.appendChild(document.createTextNode('Edit'));
     li.appendChild(editbtn);
 }
-function removeItem(emailinput)
+function removeitem(emailinput)
 {
     localStorage.removeItem(emailinput);
 }
