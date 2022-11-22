@@ -22,9 +22,7 @@
                 }
                 axios.post("https://crudcrud.com/api/e18226b0831b47b885e7abbf3918d01b/appointmentData",obj)
                 .then((res)=>{
-                    registeredusers(obj);
-                    localStorage.setItem(obj.email, JSON.stringify(obj));
-                
+                    console.log(res.data)
                 }
                 )
                 .Catch((err)=>console.log(err));
@@ -32,12 +30,16 @@
                 //localStorage.setItem(obj.email, JSON.stringify(obj));
                 
             }
-            window.addEventListener('DOMContentLoaded',(event)=>{
-                Object.keys(localStorage).forEach(key=>{
-                    const user=JSON.parse(localStorage.getItem(key));
-                    registeredusers(user);
+            window.addEventListener('DOMContentLoaded',()=>{
+                axios.get("https://crudcrud.com/api/e18226b0831b47b885e7abbf3918d01b/appointmentData")
+                .then((res)=>{
+                    console.log(res)
+                    for(let i=0;i<res.data.length;i++){
 
+                        registeredusers(res.data[i]);
+                    }
                 })
+
             }
             )
             function registeredusers(user)
