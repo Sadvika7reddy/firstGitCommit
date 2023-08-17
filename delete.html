@@ -4,8 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="stylesheet" href="start.css" />
+    <link rel="stylesheet" href="expence.css" />
     <title>Expense Tracker</title>
+    <style>
+        table {
+            width:100%;
+            border:2px solid black;
+            padding:5px; 
+        }
+        </style>
   </head>
     <body>
         <h2>Expence tracker</h2>
@@ -19,7 +26,7 @@
         <form onsubmit="saveToLocalStorage(event)" class="row-container" id="form">
             <div class="form-control">
             <label>Expence Amount</label>
-            <input type="number" name="username" id="username"  required/>
+            <input type="number" name="amount" id="amount"  required/>
             </div>
             <label>category</label>
             <select name="category" id="category">
@@ -30,7 +37,7 @@
             </select>
             <div class="form-control">       
             <label>Description</label>
-            <input type="text" name="phonenumber" id="phonenumber" />
+            <input type="text" name="discription" id="discription" />
             </div>
             <button>Add Expences</button>
         </form>
@@ -42,52 +49,70 @@
         <script>
             function saveToLocalStorage(event) {
                 event.preventDefault();
-                const name = event.target.username.value;
-                const email = event.target.category.value;
-                const phonenumber = event.target.phonenumber.value;
+                const amount = event.target.amount.value;
+                const category = event.target.category.value;
+                const discription = event.target.discription.value;
                 // localStorage.setItem('name', name);
                 // localStorage.setItem('email', email);
                 // localStorage.setItem('phonenumber', phonenumber)
                 const obj = {
-                    name,
-                    email,
-                    phonenumber
+                    amount,
+                    category,
+                    discription
                 }
-                axios.post("https://crudcrud.com/api/6edef52889b54373995118ae5064e86c/expenceTrackerData",obj)
+                axios.post("http://localhost:3000/user/add-expenses",obj)
                 .then((response)=>{
-                    showNewUserOnScreen(response.data)
+                    localStorage.setItem(response.data.newExpensesDetails.id, JSON.stringify(response.data.newExpensesDetails))
+                    showNewUserOnScreen(response.data.newExpensesDetails)
                 })
                 .catch((err)=>{
-                    console.log('error')
+                    console.log(err)
                 })
                 //localStorage.setItem(obj.phonenumber, JSON.stringify(obj))
                 //showNewUserOnScreen(obj)
             }
 
             window.addEventListener("DOMContentLoaded", () => {
-                 axios.get("https://crudcrud.com/api/6edef52889b54373995118ae5064e86c/expenceTrackerData")
+                 axios.get("http://localhost:3000/user/get-expenses")
                  .then((response)=>{
-                    for(var i=0;i<response.data.length;i++){
-                        showNewUserOnScreen(response.data[i]) 
-                    }
-                 }
+                const localStorageObj = localStorage
+                const localstoragekeys  = Object.keys(localStorageObj)
+                for(var i =0; i< localstoragekeys.length; i++){
+                    const key = localstoragekeys[i]
+                    const userDetailsString = localStorageObj[key];
+                    const userDetailsObj = JSON.parse(userDetailsString);
+                    showNewUserOnScreen(userDetailsObj)
+                }
+            }
                  )
             })
 
             function showNewUserOnScreen(user){
+                document.getElementById('category').value = '';
+                document.getElementById('amount').value = '';
+                document.getElementById('discription').value ='';
+                if(localStorage.getItem(user.category) !== null){
+                    removeUserFromScreen(user.category)
+                }
                 const parentNode = document.getElementById('listOfUsers');
-                const childHTML = `<li id=${user._id}> ${user.name} - ${user.email}-${user.phonenumber}
-                                        <button onclick=deleteUser('${user._id}')> Delete User </button>
-                                        <button onclick=editUserDetails('${user.email}','${user.name}','${user.phonenumber}','${user._id}')>Edit User </button>
+                const childHTML = `<li id=${user.id}> <table>
+                    <tr>
+                        <td>${user.amount}</td>
+                        <td>${user.category}</td>
+                        <td>${user.discription}</td>
+                    </tr>
+                        </table>
+                                        <button onclick=deleteUser('${user.id}') style="background-color:Tomato;">X</button>
+                                        <button onclick=editUserDetails('${user.category}','${user.amount}','${user.discription}','${user.id}') style="background-color:yellow;">Edit</button>
                                      </li>`
 
                 parentNode.innerHTML = parentNode.innerHTML + childHTML;
             }
-            function editUserDetails(category, name, phonenumber,userId){
+            function editUserDetails(category, amount, discription,userId){
 
                 document.getElementById('category').value = category;
-                document.getElementById('username').value = name;
-                document.getElementById('phonenumber').value =phonenumber;
+                document.getElementById('amount').value = amount;
+                document.getElementById('discription').value =discription;
                 
                     deleteUser(userId) 
             }
@@ -96,8 +121,9 @@
             // deleteUser('abc@gmail.com')
 
             function deleteUser(userId){
-                axios.delete(`https://crudcrud.com/api/6edef52889b54373995118ae5064e86c/expenceTrackerData/${userId}`)
+                axios.delete(`http://localhost:3000/user/delete-expenses/${userId}`)
                 .then((response)=>{
+                    localStorage.removeItem(userId);
                     removeUserFromScreen(userId); 
                 })
 
@@ -109,12 +135,6 @@
 
                 parentNode.removeChild(childNodeToBeDeleted)
             }
-
-
-
-
-
-
 
         </script>
 
