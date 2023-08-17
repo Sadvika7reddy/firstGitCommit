@@ -3,76 +3,80 @@
         <form onsubmit="savetoLocalStorage(event)">
             <h1>add users</h1>
             <label> Name</label>
-            <input id="username" type="text" name="username" required/><br>
+            <input id="name" type="text" name="name" required/><br>
             <label>Email</label>
-            <input id="email" type="email" name="emailId" required/><br>
+            <input id="email" type="email" name="email" required/><br>
             <button>Submit</button>
         </form>
         <ul id='listOfitems'></ul>
+        <ul id='listOfUsers'></ul>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.3/axios.min.js"></script>
         <script>
             function savetoLocalStorage(event) {
                 event.preventDefault();
-                const name = event.target.username.value;
-                const email = event.target.emailId.value;
-    
+                const name = event.target.name.value;
+                const email = event.target.email.value;
+                
                 const obj = {
                     name,
                     email
                 }
-                axios.post("https://crudcrud.com/api/e18226b0831b47b885e7abbf3918d01b/appointmentData",obj)
+                axios.post("http://localhost:3000/user/add-users",obj)
                 .then((res)=>{
-                    console.log(res.data)
+                    registeredusers(res.data.newUserDetails);
                 }
                 )
-                .Catch((err)=>console.log(err));
+                .catch((err)=>console.log(err));
             
                 //localStorage.setItem(obj.email, JSON.stringify(obj));
                 
             }
             window.addEventListener('DOMContentLoaded',()=>{
-                axios.get("https://crudcrud.com/api/e18226b0831b47b885e7abbf3918d01b/appointmentData")
+                axios.get("http://localhost:3000/user/get-users")
                 .then((res)=>{
             
                     for(let i=0;i<res.data.length;i++){
 
-                        registeredusers(res.data[i]);
+                        registeredusers(res.data[i].allUsers);
                     }
                 })
-                axios.delete("https://crudcrud.com/api/e18226b0831b47b885e7abbf3918d01b/appointmentData/637c818323685e03e8b8f62c")
-                .then((res)=>{
-                    console.log(res)
-                }
-                )
+              
 
             }
             )
             function registeredusers(user)
             {
                 const parentNode=document.getElementById('listOfitems');
-                const createItems= `<li id='${user.email}'>${user.name} - ${user.email}
-                                                <button onclick=deleteUser('${user.email}')>Delete</button>
-                                                <button onclick=editUserDetails('${user.email}','${user.name}','${user.phonenumber}')>Edit User </button>
-                                            </li>
-                                            `
+                const createItems=`<li id=${user.id}> <table>
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                    </tr>
+                        </table>
+                                        <button onclick=deleteUser('${user.id}') style="background-color:Tomato;">X</button>
+                                        <button onclick=editUserDetails('${user.email}','${user.name}','${user.id}') style="background-color:yellow;">Edit</button>
+                                     </li>`
                     parentNode.innerHTML+=createItems;
             }
-            function editUserDetails(emailId, name, phonenumber){
+            function editUserDetails(email,name,userId){
 
-                document.getElementById('email').value = emailId;
-                document.getElementById('username').value = name;
-                document.getElementById('phonenumber').value =phonenumber;
+                document.getElementById('email').value = email;
+                document.getElementById('name').value = name;
+                
+                    deleteUser(userId)
+            }
+           
+                function deleteUser(userId){
+                axios.delete(`http://localhost:3000/user/delete-users/${userId}`)
+                .then((response)=>{
+                    removeUserFromScreen(userId); 
+                })
 
-                    deleteUser(emailId)
             }
-            function deleteUser(email)
-            {
-                localStorage.removeItem(email);
-                removeitems(email);
-            }
-            function removeitems(email){
+            
+            function removeUserFromScreen(userId){
                 const parentNode=document.getElementById('listOfitems');
-                const child=document.getElementById(email);
+                const child=document.getElementById(userId);
                 parentNode.removeChild(child);
             }
 
