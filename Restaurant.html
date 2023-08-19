@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="expence.css" />
+    <title>Expense Tracker</title>
+    <style>
+        table {
+            width:100%;
+            border:2px solid black;
+            padding:5px; 
+        }
+        </style>
+  </head>
+  <body>
+     <h2>Restaurant App</h2>
+     <div class="row-container">
+        <form onsubmit="saveToLocalStorage(event)" class="row-container" id="form">
+            <div class="form-control">
+            <label>Amount</label>
+            <input type="number" name="amount" id="amount"  required/>
+            </div>
+            <label>choose a tables</label>
+            <select name="table" id="table">
+                <option value="table1" id="table1">table1</option>
+                <option value="table2" id="table2">table2</option>
+                <option value="table3" id="table3">table3</option>
+            </select>
+            <div class="form-control">       
+            <label>choose a dish</label>
+            <input type="text" name="dish" id="dish" />
+            </div>
+            <button type="submit">Add Bill</button>
+        </form>
+        </div>
+        <div>
+            <h2>table1</h2>
+            <ul id='listOfUsers1'></ul>
+        </div>
+        <div>
+            <h2>table2</h2>
+            <ul id="listOfUsers2"></ul>
+        </div>
+        <div>
+            <h2>table3</h2>
+            <ul id="listOfUsers3"></ul>
+        </div>
+       
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.4.1/axios.min.js"></script>
+
+        <script>
+            function saveToLocalStorage(event) {
+                event.preventDefault();
+                const amount = event.target.amount.value;
+                const table = event.target.table.value;
+                const dish = event.target.dish.value;
+                // localStorage.setItem('name', name);
+                // localStorage.setItem('email', email);
+                // localStorage.setItem('phonenumber', phonenumber)
+                const obj = {
+                    amount,
+                    table,
+                    dish
+                }
+                axios.post("http://localhost:3000/user/add-expenses",obj)
+                .then((response)=>{
+                    localStorage.setItem(response.data.newExpensesDetails.id, JSON.stringify(response.data.newExpensesDetails))
+                     showNewUserOnScreen(response.data.newExpensesDetails)
+                   
+                })
+                .catch((err)=>{
+                    console.log(err)
+                })
+                //localStorage.setItem(obj.phonenumber, JSON.stringify(obj))
+                //showNewUserOnScreen(obj)
+            }
+
+            window.addEventListener("DOMContentLoaded", () => {
+                 axios.get("http://localhost:3000/user/get-expenses")
+                 .then((response)=>{
+                const localStorageObj = localStorage
+                const localstoragekeys  = Object.keys(localStorageObj)
+                for(var i =0; i< localstoragekeys.length; i++){
+                    const key = localstoragekeys[i]
+                    const userDetailsString = localStorageObj[key];
+                    const userDetailsObj = JSON.parse(userDetailsString);
+                    showNewUserOnScreen(userDetailsObj)
+                }
+            }
+                 )
+            })
+
+            function showNewUserOnScreen(user){
+                document.getElementById('table').value = '';
+                document.getElementById('amount').value = '';
+                document.getElementById('dish').value ='';
+               
+                let parentNode; 
+                if(user.table=='table1'){
+                    parentNode=document.getElementById("listOfUsers1");
+                     }
+                     else if(user.table=='table2'){
+                        parentNode=document.getElementById("listOfUsers2");
+                     }
+                     else{
+                        parentNode=document.getElementById("listOfUsers3");
+                     }
+                const childHTML = `<li id=${user.id}> <table>
+                    <tr>
+                        <td>${user.amount}</td>
+                        <td>${user.table}</td>
+                        <td>${user.dish}</td>
+                    </tr>
+                        </table>
+                                        <button onclick=deleteUser('${user.id}','${user.table}') style="background-color:Tomato;">X</button>
+                                        <button onclick=editUserDetails('${user.table}','${user.amount}','${user.dish}','${user.id}') style="background-color:yellow;">Edit</button>
+                                     </li>`
+                     
+                
+                parentNode.innerHTML = parentNode.innerHTML + childHTML;
+            }
+           
+            function editUserDetails(table, amount, dish,userId){
+
+                document.getElementById('table').value = table;
+                document.getElementById('amount').value = amount;
+                document.getElementById('dish').value =dish;
+                
+                
+                    deleteUser(userId,table) 
+            }
+
+
+            // deleteUser('abc@gmail.com')
+
+            function deleteUser(userId,table){
+                axios.delete(`http://localhost:3000/user/delete-expenses/${userId}`)
+                .then((response)=>{
+                    localStorage.removeItem(userId);
+                    removeUserFromScreen(userId,table); 
+                })
+
+            }
+
+            function removeUserFromScreen(userId,table){
+                let parentNode; 
+                if(table=='table1'){
+                    parentNode=document.getElementById("listOfUsers1");
+                     }
+                     else if(table=='table2'){
+                        parentNode=document.getElementById("listOfUsers2");
+                     }
+                     else{
+                        parentNode=document.getElementById("listOfUsers3");
+                     }
+                let childNodeToBeDeleted = document.getElementById(userId);
+
+                parentNode.removeChild(childNodeToBeDeleted)
+            }
+
+        </script>
+
+
+    </body>
+</html>
+ 
